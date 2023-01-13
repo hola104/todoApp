@@ -10,7 +10,7 @@ export default class TodoApp extends Component {
 
   state = {
     todoData: [
-      this.createTodoItem("Firsttr task"),
+      this.createTodoItem("First task"),
       this.createTodoItem("Second task"),
       this.createTodoItem("Third task"),
     ],
