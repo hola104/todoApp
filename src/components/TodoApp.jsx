@@ -9,11 +9,7 @@ export default class TodoApp extends Component {
   maxId = 100
 
   state = {
-    todoData: [
-      this.createTodoItem("First task"),
-      this.createTodoItem("Second task"),
-      this.createTodoItem("Third task"),
-    ],
+    todoData: [this.createTodoItem("First"), this.createTodoItem("Second"), this.createTodoItem("Third")],
     filter: "all",
     setClearComplitedTodo: () => {},
   }

@@ -42,8 +42,7 @@ export default class Task extends Component {
   }
 
   render() {
-    const { id, label, onDeleted, onToggleDone, completed, onCheckedItem, onEditingItem, editing, createDate } =
-      this.props
+    const { label, onDeleted, completed, onCheckedItem, onEditingItem, editing, createDate } = this.props
 
     const createTime = formatDistanceToNow(createDate, {
       includeSeconds: true,
@@ -69,11 +68,9 @@ export default class Task extends Component {
               }}
             />
             <label>
-              <span className="title" onClick={onToggleDone}>
-                {label}
-              </span>
+              <span className="title">{label}</span>
 
-              <TodoTimer key={id} />
+              <TodoTimer />
 
               <span className="created">created {createTime} ago</span>
             </label>
