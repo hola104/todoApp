@@ -26,9 +26,9 @@ function Timer() {
   }
 
   return (
-    <span className="description">
-      <button type="button" className="icon icon-play" onClick={handleStart} />
-      <button type="button" className="icon icon-pause" onClick={handleStop} />
+    <span className="description-timer">
+      <button type="button" className="icon icon-play" aria-label="button" onClick={handleStart} />
+      <button type="button" className="icon icon-pause" aria-label="button" onClick={handleStop} />
       <span className="timer">
         {minutes}:{seconds}
       </span>
