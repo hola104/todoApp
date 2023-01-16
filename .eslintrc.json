@@ -10,8 +10,8 @@
     "plugin:react/recommended",
     "plugin:prettier/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings",
-    "airbnb"
+    "plugin:import/warnings"
+    // "airbnb"
   ],
   "parserOptions": {
     "ecmaFeatures": {

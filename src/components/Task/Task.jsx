@@ -1,6 +1,9 @@
 import React, { Component } from "react"
 import PropTypes from "prop-types"
 import { formatDistanceToNow } from "date-fns"
+
+import TodoTimer from "../TodoTimer/TodoTimer"
+
 import "./Task.css"
 
 export default class Task extends Component {
@@ -39,7 +42,7 @@ export default class Task extends Component {
   }
 
   render() {
-    const { label, onDeleted, onToggleDone, completed, onCheckedItem, onEditingItem, editing, createDate } = this.props
+    const { label, onDeleted, completed, onCheckedItem, onEditingItem, editing, createDate } = this.props
 
     const createTime = formatDistanceToNow(createDate, {
       includeSeconds: true,
@@ -65,9 +68,10 @@ export default class Task extends Component {
               }}
             />
             <label>
-              <span className="description" onClick={onToggleDone}>
-                {label}
-              </span>
+              <span className="title">{label}</span>
+
+              <TodoTimer />
+
               <span className="created">created {createTime} ago</span>
             </label>
             <button className="icon icon-edit" onClick={onEditingItem}></button>

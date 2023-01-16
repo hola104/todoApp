@@ -85,14 +85,14 @@
 }
 
 .todo-list li .icon {
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   bottom: -3px;
   width: 30px;
-  height: 40px;
-  font-size: 34px;
+  /* height: 40px; */
+  /* font-size: 34px; */
   color: #cc9a9a;
-  margin: auto 0 11px;
+  /* margin: auto 0 11px; */
   transition: color 0.2s ease-out;
   cursor: pointer;
 }
