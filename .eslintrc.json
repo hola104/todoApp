@@ -11,7 +11,7 @@
     "plugin:prettier/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
-    // "airbnb"
+    "airbnb"
   ],
   "parserOptions": {
     "ecmaFeatures": {
