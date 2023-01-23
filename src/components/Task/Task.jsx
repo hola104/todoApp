@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import PropTypes from "prop-types"
 import { formatDistanceToNow } from "date-fns"
 
-import TodoTimer from "../TodoTimer/TodoTimer"
+import Timer from "../TodoTimer/TodoTimer"
 
 import "./Task.css"
 
@@ -39,10 +39,13 @@ export default class Task extends Component {
   onSubmitTask = (e) => {
     e.preventDefault()
     this.props.addEditingItem(this.state.label)
+    this.setState({
+      label: "",
+    })
   }
 
   render() {
-    const { label, onDeleted, completed, onCheckedItem, onEditingItem, editing, createDate } = this.props
+    const { label, onDeleted, completed, onCheckedItem, onEditingItem, editing, createDate, min, sec, id } = this.props
 
     const createTime = formatDistanceToNow(createDate, {
       includeSeconds: true,
@@ -70,7 +73,9 @@ export default class Task extends Component {
             <label>
               <span className="title">{label}</span>
 
-              <TodoTimer />
+              <span className="description">
+                <Timer key={id} min={min} sec={sec} />
+              </span>
 
               <span className="created">created {createTime} ago</span>
             </label>

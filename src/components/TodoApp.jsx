@@ -14,25 +14,27 @@ export default class TodoApp extends Component {
     setClearComplitedTodo: () => {},
   }
 
-  createTodoItem(label) {
+  createTodoItem(label, min = 0, sec = 30) {
     return {
       label,
+      min,
+      sec,
       completed: false,
       id: this.maxId++,
       createDate: new Date(),
     }
   }
 
-  deleteItem = (id) => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id)
-
-      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)]
-
-      return {
-        todoData: newArray,
-      }
-    })
+  addItem = (text, min, sec) => {
+    if (text && (min || sec)) {
+      const newTask = this.createTodoItem(text, Number(min), Number(sec))
+      this.setState(({ todoData }) => {
+        const newArray = [...todoData, newTask]
+        return {
+          todoData: newArray,
+        }
+      })
+    }
   }
 
   addEditingItem = (text, id) => {
@@ -51,13 +53,14 @@ export default class TodoApp extends Component {
     })
   }
 
-  addItem = (text) => {
-    const newItem = this.createTodoItem(text)
-
+  deleteItem = (id) => {
     this.setState(({ todoData }) => {
-      const newArr = [...todoData, newItem]
+      const idx = todoData.findIndex((el) => el.id === id)
+
+      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)]
+
       return {
-        todoData: newArr,
+        todoData: newArray,
       }
     })
   }
@@ -114,7 +117,7 @@ export default class TodoApp extends Component {
   }
 
   render() {
-    const { todoData, filter, createDate } = this.state
+    const { todoData, filter, createDate, min, sec } = this.state
 
     const completedCount = todoData.filter((el) => el.completed).length
     const todoCount = todoData.length - completedCount
@@ -126,6 +129,8 @@ export default class TodoApp extends Component {
         <section className="main">
           <TaskList
             todos={filterStatus}
+            min={min}
+            sec={sec}
             onDeleted={this.deleteItem}
             addEditingItem={this.addEditingItem}
             onToggleDone={this.onToggleDone}

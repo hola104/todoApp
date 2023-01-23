@@ -5,6 +5,8 @@ import "./NewTaskForm.css"
 export default class NewTaskForm extends Component {
   state = {
     label: "",
+    min: "",
+    sec: "",
   }
 
   static defaultProps = {
@@ -29,14 +31,33 @@ export default class NewTaskForm extends Component {
     }
   }
 
+  onMinChange = (event) => {
+    this.setState({
+      min: event.target.value,
+    })
+  }
+
+  onSecChange = (event) => {
+    this.setState({
+      sec: event.target.value,
+    })
+  }
+
   onSubmit = (e) => {
+    const { label, min, sec } = this.state
     e.preventDefault()
-    if (this.state.label !== "") {
-      this.props.onItemAdded(this.state.label)
-      this.setState({
-        label: "",
-      })
+
+    if (label && (min || min === 0) && (sec || sec === 0)) {
+      const { label, min, sec } = this.state
+      this.props.onItemAdded(label, min, sec)
+    } else {
+      return
     }
+    this.setState({
+      label: "",
+      min: "",
+      sec: "",
+    })
   }
 
   render() {
@@ -53,8 +74,21 @@ export default class NewTaskForm extends Component {
               onChange={this.onLabelChange}
               autoFocus
             />
-            <input type="number" className="new-todo-form__timer" placeholder="Min" />
-            <input type="number" className="new-todo-form__timer" placeholder="Sec" />
+            <input
+              type="number"
+              className="new-todo-form__timer"
+              onChange={this.onMinChange}
+              placeholder="Min"
+              value={this.state.min}
+            />
+            <input
+              type="number"
+              className="new-todo-form__timer"
+              onChange={this.onSecChange}
+              placeholder="Sec"
+              value={this.state.sec}
+            />
+            <input type="submit" className="new-todo-form-button" hidden />
           </form>
         </header>
       </>
