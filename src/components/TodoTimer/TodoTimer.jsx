@@ -1,7 +1,7 @@
-import React, { Component } from "react"
-import PropTypes from "prop-types"
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
-import "./TodoTimer.css"
+import "./TodoTimer.css";
 
 export default class Timer extends Component {
   state = {
@@ -9,13 +9,13 @@ export default class Timer extends Component {
     sec: this.props.sec,
     zero: false,
     active: false,
-  }
+  };
 
   static defaultProps = {
     update: () => {},
     startTimer: () => {},
     stopTimer: () => {},
-  }
+  };
 
   static propTypes = {
     min: PropTypes.number,
@@ -25,60 +25,62 @@ export default class Timer extends Component {
     update: PropTypes.func,
     startTimer: PropTypes.func,
     stopTimer: PropTypes.func,
+  };
+
+  componentDidMount() {
+    const { min, sec } = this.state;
+    if (min === 0 && sec === 0) {
+      this.setState({ zero: true });
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.startTimer) {
+      this.interval = setInterval(() => this.update(), 1000);
+    }
   }
 
   update = () => {
-    const { zero, min, sec } = this.state
-    if (zero) {
-      this.setState({ min, sec: sec + 1 })
-      sec === 59 && this.setState({ min: min + 1, sec: 0 })
-    } else {
-      this.setState({ min, sec: sec - 1 })
-      sec === 0 && this.setState({ min: min - 1, sec: 59 })
-      if (min === 0 && sec === 0) {
-        this.setState({ min: 0, sec: 0 })
-        clearInterval(this.interval)
-      }
+    const { min, sec } = this.state;
+
+    this.setState({ min, sec: sec - 1 });
+    sec === 0 && this.setState({ min: min - 1, sec: 59 });
+    if (min === 0 && sec === 0) {
+      this.setState({ min: 0, sec: 0 });
+      clearInterval(this.interval);
     }
+  };
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   startTimer = () => {
-    this.setState({ active: true })
-    this.interval = setInterval(() => this.update(), 1000)
-  }
+    this.setState({ active: true });
+    this.interval = setInterval(() => this.update(), 1000);
+  };
 
   stopTimer = () => {
-    this.setState({ active: false })
-    clearInterval(this.interval)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval)
-  }
-
-  componentDidMount() {
-    const { min, sec } = this.state
-    if (min === 0 && sec === 0) {
-      this.setState({ zero: true })
-    }
-  }
+    this.setState({ active: false });
+    clearInterval(this.interval);
+  };
 
   render() {
-    const { active, min, sec } = this.state
+    const { active, min, sec } = this.state;
 
-    let minNumber
-    let secNumber
+    let minNumber;
+    let secNumber;
 
     if (min < 10) {
-      minNumber = `0${min}`
+      minNumber = `0${min}`;
     } else {
-      minNumber = min
+      minNumber = min;
     }
 
     if (sec < 10) {
-      secNumber = `0${sec}`
+      secNumber = `0${sec}`;
     } else {
-      secNumber = sec
+      secNumber = sec;
     }
 
     return (
@@ -89,6 +91,6 @@ export default class Timer extends Component {
           {minNumber}:{secNumber}
         </span>
       </span>
-    )
+    );
   }
 }
