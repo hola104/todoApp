@@ -65,12 +65,28 @@ export default class Timer extends Component {
 
   render() {
     const { active, min, sec } = this.state
+
+    let minNumber
+    let secNumber
+
+    if (min < 10) {
+      minNumber = `0${min}`
+    } else {
+      minNumber = min
+    }
+
+    if (sec < 10) {
+      secNumber = `0${sec}`
+    } else {
+      secNumber = sec
+    }
+
     return (
       <span className="description">
         <button type="button" className="icon icon-play" onClick={this.startTimer} disabled={active} />
         <button type="button" className="icon icon-pause" onClick={this.stopTimer} />
         <span className="timer">
-          {min}:{sec}
+          {minNumber}:{secNumber}
         </span>
       </span>
     )
