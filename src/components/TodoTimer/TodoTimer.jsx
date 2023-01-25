@@ -27,33 +27,20 @@ export default class Timer extends Component {
     stopTimer: PropTypes.func,
   };
 
-  componentDidMount() {
-    const { min, sec } = this.state;
-    if (min === 0 && sec === 0) {
-      this.setState({ zero: true });
-    }
-  }
-
-  componentDidUpdate() {
-    if (this.startTimer) {
-      this.interval = setInterval(() => this.update(), 1000);
-    }
-  }
-
   update = () => {
-    const { min, sec } = this.state;
-
-    this.setState({ min, sec: sec - 1 });
-    sec === 0 && this.setState({ min: min - 1, sec: 59 });
-    if (min === 0 && sec === 0) {
-      this.setState({ min: 0, sec: 0 });
-      clearInterval(this.interval);
+    const { zero, min, sec } = this.state;
+    if (zero) {
+      this.setState({ min, sec: sec + 1 });
+      sec === 59 && this.setState({ min: min + 1, sec: 0 });
+    } else {
+      this.setState({ min, sec: sec - 1 });
+      sec === 0 && this.setState({ min: min - 1, sec: 59 });
+      if (min === 0 && sec === 0) {
+        this.setState({ min: 0, sec: 0 });
+        clearInterval(this.interval);
+      }
     }
   };
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
 
   startTimer = () => {
     this.setState({ active: true });
@@ -64,6 +51,17 @@ export default class Timer extends Component {
     this.setState({ active: false });
     clearInterval(this.interval);
   };
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  componentDidMount() {
+    const { min, sec } = this.state;
+    if (min === 0 && sec === 0) {
+      this.setState({ zero: true });
+    }
+  }
 
   render() {
     const { active, min, sec } = this.state;
@@ -88,7 +86,7 @@ export default class Timer extends Component {
         <button type="button" className="icon icon-play" onClick={this.startTimer} disabled={active} />
         <button type="button" className="icon icon-pause" onClick={this.stopTimer} />
         <span className="timer">
-          {minNumber}:{secNumber}
+          {minNumber} : {secNumber}
         </span>
       </span>
     );

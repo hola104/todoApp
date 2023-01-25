@@ -14,7 +14,7 @@ export default class TodoApp extends Component {
     setClearComplitedTodo: () => {},
   };
 
-  createTodoItem(label, min = 0, sec = 5) {
+  createTodoItem(label, min = 0, sec = 10) {
     return {
       label,
       min,
