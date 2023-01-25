@@ -1,64 +1,66 @@
-import React, { Component } from "react"
-import PropTypes from "prop-types"
-import "./NewTaskForm.css"
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import "./NewTaskForm.css";
 
 export default class NewTaskForm extends Component {
   state = {
     label: "",
     min: "",
     sec: "",
-  }
+  };
 
   static defaultProps = {
     onLabelChange: () => {},
     onSubmit: () => {},
-  }
+    onItemAdded: () => {},
+  };
 
   static propTypes = {
     onLabelChange: PropTypes.func,
     onSubmit: PropTypes.func,
-  }
+    onItemAdded: PropTypes.func,
+  };
 
   onLabelChange = (event) => {
     if (event.target.value.charAt(0) === " ") {
       this.setState({
         label: "",
-      })
+      });
     } else {
       this.setState({
         label: event.target.value,
-      })
+      });
     }
-  }
+  };
 
   onMinChange = (event) => {
     this.setState({
       min: event.target.value,
-    })
-  }
+    });
+  };
 
   onSecChange = (event) => {
     this.setState({
       sec: event.target.value,
-    })
-  }
+    });
+  };
 
   onSubmit = (e) => {
-    const { label, min, sec } = this.state
-    e.preventDefault()
+    const { label, min, sec } = this.state;
+    e.preventDefault();
 
     if (label && (min || min === 0) && (sec || sec === 0)) {
-      const { label, min, sec } = this.state
-      this.props.onItemAdded(label, min, sec)
+      const { label, min, sec } = this.state;
+      this.props.onItemAdded(label, min, sec);
     } else {
-      return
+      return;
     }
     this.setState({
       label: "",
       min: "",
       sec: "",
-    })
-  }
+    });
+  };
 
   render() {
     return (
@@ -92,6 +94,6 @@ export default class NewTaskForm extends Component {
           </form>
         </header>
       </>
-    )
+    );
   }
 }

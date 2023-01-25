@@ -6,25 +6,50 @@ import Footer from "./Footer/Footer";
 import "./TodoApp.css";
 
 export default class TodoApp extends Component {
-  maxId = 100;
+  constructor(props) {
+    super(props);
+    this.state = {
+      todoData: [
+        {
+          label: "First",
+          id: 100,
+          completed: false,
+          paused: false,
+          finished: false,
+          min: 0,
+          sec: 15,
+          createDate: new Date(),
+        },
+        {
+          label: "Second",
+          id: 101,
+          completed: false,
+          paused: false,
+          finished: false,
+          min: 0,
+          sec: 5,
+          createDate: new Date(),
+        },
+      ],
+      filter: "all",
+      setClearComplitedTodo: () => {},
+    };
+    this.maxId = 1;
+  }
 
-  state = {
-    todoData: [this.createTodoItem("Task")],
-    filter: "all",
-    setClearComplitedTodo: () => {},
-  };
-
-  createTodoItem(label, min = 0, sec = 10) {
+  createTodoItem(label, min, sec) {
     return {
       label,
       min,
       sec,
       completed: false,
+      paused: false,
+      finished: false,
       id: this.maxId++,
       createDate: new Date(),
     };
   }
-
+  // вот отсюда!!
   addItem = (text, min, sec) => {
     if (text && (min || sec)) {
       const newTask = this.createTodoItem(text, Number(min), Number(sec));
