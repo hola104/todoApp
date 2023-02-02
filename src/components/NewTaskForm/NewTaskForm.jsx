@@ -1,99 +1,87 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import "./NewTaskForm.css";
 
-export default class NewTaskForm extends Component {
+class NewTaskForm extends Component {
   state = {
-    label: "",
     min: "",
     sec: "",
+    title: "",
   };
 
-  static defaultProps = {
-    onLabelChange: () => {},
-    onSubmit: () => {},
-    onItemAdded: () => {},
-  };
-
-  static propTypes = {
-    onLabelChange: PropTypes.func,
-    onSubmit: PropTypes.func,
-    onItemAdded: PropTypes.func,
-  };
-
-  onLabelChange = (event) => {
-    if (event.target.value.charAt(0) === " ") {
-      this.setState({
-        label: "",
-      });
-    } else {
-      this.setState({
-        label: event.target.value,
-      });
-    }
-  };
-
-  onMinChange = (event) => {
+  onLabelChangeTitle = (e) => {
     this.setState({
-      min: event.target.value,
+      title: e.target.value,
     });
   };
-
-  onSecChange = (event) => {
+  onLabelChangeMin = (e) => {
     this.setState({
-      sec: event.target.value,
+      min: e.target.value,
+    });
+  };
+  onLabelChangeSec = (e) => {
+    this.setState({
+      sec: e.target.value,
     });
   };
 
   onSubmit = (e) => {
-    const { label, min, sec } = this.state;
+    console.log(e.target.value);
     e.preventDefault();
-
-    if (label && (min || min === 0) && (sec || sec === 0)) {
-      const { label, min, sec } = this.state;
-      this.props.onItemAdded(label, min, sec);
-    } else {
+    if (this.state.title === "") {
       return;
     }
+
+    this.props.addTask(this.state.title, this.state.min, this.state.sec);
     this.setState({
-      label: "",
-      min: "",
-      sec: "",
+      title: "",
     });
+  };
+
+  onClickEnter = (e) => {
+    if (e.keyCode === 13) {
+      if (this.state.title !== "" && this.state.min !== "" && this.state.sec !== "") {
+        this.props.addTask(this.state.title, parseInt(this.state.min) * 60 + parseInt(this.state.sec));
+
+        this.setState({
+          title: "",
+          min: "",
+          sec: "",
+        });
+      }
+    }
   };
 
   render() {
     return (
-      <>
-        <header className="header">
-          <h1>todos</h1>
-          <form className="new-todo-form" onSubmit={this.onSubmit}>
-            <input
-              type="text"
-              className="new-todo"
-              placeholder="What needs to be done?"
-              value={this.state.label}
-              onChange={this.onLabelChange}
-              autoFocus
-            />
-            <input
-              type="number"
-              className="new-todo-form__timer"
-              onChange={this.onMinChange}
-              placeholder="Min"
-              value={this.state.min}
-            />
-            <input
-              type="number"
-              className="new-todo-form__timer"
-              onChange={this.onSecChange}
-              placeholder="Sec"
-              value={this.state.sec}
-            />
-            <input type="submit" className="new-todo-form-button" hidden />
-          </form>
-        </header>
-      </>
+      <header className="header">
+        <h1>todos</h1>
+
+        <form className="new-todo-form" onKeyDown={(e) => this.onClickEnter(e)}>
+          <input
+            placeholder="What needs to be done?"
+            type="text"
+            value={this.state.title}
+            className="new-todo"
+            onChange={this.onLabelChangeTitle}
+          />
+          <input
+            type="number"
+            className="new-todo-form__timer"
+            placeholder="Min"
+            value={this.state.min}
+            onChange={this.onLabelChangeMin}
+          />
+          <input
+            type="number"
+            className="new-todo-form__timer"
+            placeholder="Sec"
+            value={this.state.sec}
+            onChange={this.onLabelChangeSec}
+          />
+        </form>
+      </header>
     );
   }
 }
+
+export default NewTaskForm;

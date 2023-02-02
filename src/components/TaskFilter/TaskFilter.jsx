@@ -1,53 +1,39 @@
-import React, { Component } from "react"
-import PropTypes from "prop-types"
-import "./TaskFilter.css"
+import PropTypes from "prop-types";
 
-export default class TaskFilter extends Component {
-  static defaultProps = {
-    filter: "all",
-    onFilterChange: () => {},
-    setClearComplitedTodo: () => {},
-  }
+import "./TaskFilter.css";
 
-  static propTypes = {
-    filter: PropTypes.string,
-    onFilterChange: PropTypes.func,
-    setClearComplitedTodo: PropTypes.func,
-  }
+function TaskFilter({ filter, onFilterChange }) {
+  let maxId = 1;
 
-  buttons = [
+  const buttonsData = [
     { name: "all", label: "All" },
     { name: "active", label: "Active" },
     { name: "completed", label: "Completed" },
-  ]
+  ];
 
-  render() {
-    const { filter, onFilterChange, setClearComplitedTodo } = this.props
-    const buttons = this.buttons.map(({ name, label }) => {
-      const isActive = filter === name
-      const classIsActive = isActive ? "selected" : ""
-      return (
-        <button
-          type="button"
-          className={classIsActive}
-          key={name}
-          aria-label="filter"
-          onClick={() => onFilterChange(name)}
-        >
-          {label}
-        </button>
-      )
-    })
+  const buttons = buttonsData.map(({ name, label }) => {
+    const active = filter === name;
+    const classFilter = active ? "selected" : "";
 
     return (
-      <>
-        <ul className="filters">
-          <li>{buttons}</li>
-        </ul>
-        <button type="button" aria-label="clear complited" onClick={setClearComplitedTodo}>
-          Clear completed
+      <li key={maxId++}>
+        <button type="button" className={classFilter} key={name} onClick={() => onFilterChange(name)}>
+          {label}
         </button>
-      </>
-    )
-  }
+      </li>
+    );
+  });
+
+  TaskFilter.propTypes = {
+    filter: PropTypes.string,
+    onFilterChange: PropTypes.func.isRequired,
+  };
+
+  TaskFilter.defaultProps = {
+    filter: "all",
+  };
+
+  return <ul className="filters">{buttons}</ul>;
 }
+
+export default TaskFilter;

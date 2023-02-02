@@ -9,164 +9,223 @@ export default class TodoApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      todoData: [
-        {
+      todoData: {
+        1: {
+          id: 1,
           label: "First",
-          id: 100,
-          completed: false,
-          paused: false,
-          finished: false,
-          min: 0,
-          sec: 15,
           createDate: new Date(),
+          completed: false,
+          editing: false,
+          time: 180,
+          pause: false,
         },
-        {
+        2: {
+          id: 2,
           label: "Second",
-          id: 101,
-          completed: false,
-          paused: false,
-          finished: false,
-          min: 0,
-          sec: 5,
           createDate: new Date(),
+          completed: false,
+          editing: false,
+          time: 200,
+          pause: false,
         },
-      ],
-      filter: "all",
+        3: {
+          id: 3,
+          label: "Third",
+          createDate: new Date(),
+          completed: false,
+          editing: false,
+          time: 100,
+          pause: false,
+        },
+      },
+      timerId: {
+        1: "",
+        2: "",
+        3: "",
+      },
+
+      filter: "",
       setClearComplitedTodo: () => {},
     };
-    this.maxId = 1;
+    this.maxId = 4;
   }
 
-  createTodoItem(label, min, sec) {
-    return {
-      label,
-      min,
-      sec,
-      completed: false,
-      paused: false,
-      finished: false,
+  addTask = (label, time) => {
+    const newTask = {
       id: this.maxId++,
+      label,
+      time,
+      editing: false,
+      completed: false,
       createDate: new Date(),
     };
-  }
-  // вот отсюда!!
-  addItem = (text, min, sec) => {
-    if (text && (min || sec)) {
-      const newTask = this.createTodoItem(text, Number(min), Number(sec));
-      this.setState(({ todoData }) => {
-        const newArray = [...todoData, newTask];
-        return {
-          todoData: newArray,
-        };
-      });
-    }
+
+    const timerStart = (id) => this.handlerStartTimer(id);
+
+    this.setState(({ todoData }, { timerId }) => ({
+      todoData: { ...todoData, [newTask.id]: newTask },
+      timerId: {
+        ...timerId,
+        [newTask.id]: timerStart(newTask.id),
+      },
+    }));
   };
 
-  addEditingItem = (text, id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: todoData.map((item) => {
-          return item.id === id
-            ? {
-                ...item,
-                label: text ? text : item.label,
-                editing: !item.editing,
-              }
-            : item;
-        }),
-      };
+  handleInputChange = (id) => (label) => {
+    this.setState(({ todoData }) => ({
+      todoData: { ...todoData, [id]: { ...todoData[id], label } },
+    }));
+  };
+
+  handlerStartTimer = (id) => {
+    this.timerId = setInterval(() => this.handleTimerChange(id), 1000);
+
+    return this.timerId;
+  };
+
+  handleTimerChange = (id) => {
+    const { timerId } = this.state;
+    const { todoData } = this.state;
+
+    const timeFinish = todoData[id].time === 0;
+    if (timeFinish) {
+      clearInterval(timerId[id]);
+      this.setState({ timerId: { ...timerId, [id]: "" } });
+      return;
+    }
+
+    this.setState({
+      todoData: { ...todoData, [id]: { ...todoData[id], time: todoData[id].time - 1 } },
     });
+  };
+
+  setPaused = (id) => {
+    const { timerId } = this.state;
+
+    clearInterval(timerId[id]);
+    this.setState({ timerId: { ...timerId, [id]: "" } });
+  };
+
+  setPlay = (id) => {
+    const { timerId } = this.state;
+
+    if (timerId[id]) return;
+
+    const timerStart = this.handlerStartTimer(id);
+    this.setState({ timerId: { ...timerId, [id]: timerStart } });
+  };
+
+  onEdit = (id) => {
+    this.setState(({ todoData }) => ({
+      todoData: {
+        ...todoData,
+        [id]: { ...todoData[id], editing: !todoData[id].editing },
+      },
+    }));
   };
 
   deleteItem = (id) => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
+    const { todoData, timerId } = this.state;
 
-      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+    const newTasks = Object.keys(todoData).reduce((acc, key) => {
+      if (key !== id) {
+        acc[key] = todoData[key];
+      }
 
-      return {
-        todoData: newArray,
-      };
-    });
+      return acc;
+    }, {});
+
+    const newTimers = Object.keys(timerId).reduce((acc, key) => {
+      if (key !== id) {
+        acc[key] = timerId[key];
+      }
+
+      return acc;
+    }, {});
+
+    this.setState({ todoData: newTasks, timerId: newTimers });
   };
 
   onToggleDone = (id) => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[idx];
-      const newItem = { ...oldItem, completed: !oldItem.completed };
-
-      const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-
-      return {
-        todoData: newArray,
-      };
-    });
+    this.setState(({ todoData }) => ({
+      todoData: {
+        ...todoData,
+        [id]: { ...todoData[id], completed: !todoData[id].completed },
+      },
+    }));
   };
 
-  filterFunc(items, filter) {
+  filterAdaptation = (tasksItems, bool) =>
+    Object.entries(tasksItems).reduce((acc, task) => {
+      const [key, label] = task;
+      const { completed } = label;
+
+      if (completed === bool) {
+        acc[key] = label;
+      }
+
+      return acc;
+    }, {});
+
+  filterFunc = (filter) => {
+    const { todoData } = this.state;
+
     switch (filter) {
-      case "all":
-        return items;
       case "active":
-        return items.filter((item) => !item.completed);
+        return this.filterAdaptation(todoData, false);
+
       case "completed":
-        return items.filter((item) => item.completed);
+        return this.filterAdaptation(todoData, true);
+
       default:
-        return items;
+        return todoData;
     }
-  }
+  };
+
+  countTasks = () => {
+    const { todoData } = this.state;
+
+    return Object.entries(todoData).reduce((acc, task) => {
+      const [, label] = task;
+      const { completed } = label;
+      if (!completed) {
+        return acc + 1;
+      }
+
+      return acc;
+    }, 0);
+  };
 
   onFilterChange = (filter) => this.setState({ filter });
 
   setClearComplitedTodo = () => {
-    this.setState(({ todoData }) => {
-      return { todoData: todoData.filter((item) => !item.completed) };
-    });
-  };
+    const { todoData } = this.state;
+    const completedTasks = this.filterAdaptation(todoData, false);
 
-  itemProperty = (arr, id, PropName) => {
-    return arr.map((item) => (item.id === id ? { ...item, [PropName]: !item[PropName] } : item));
-  };
-
-  onCheckedItem = (id) => {
-    this.setState(({ todoData }) => {
-      return { todoData: this.itemProperty(todoData, id, "completed") };
-    });
-  };
-
-  onEditingItem = (id) => {
-    this.setState(({ todoData }) => {
-      return { todoData: this.itemProperty(todoData, id, "editing") };
-    });
+    this.setState({ todoData: completedTasks });
   };
 
   render() {
-    const { todoData, filter, createDate, min, sec } = this.state;
+    const { tasks, filter } = this.state;
+    const active = this.countTasks(tasks);
 
-    const completedCount = todoData.filter((el) => el.completed).length;
-    const todoCount = todoData.length - completedCount;
-    const filterStatus = this.filterFunc(todoData, filter);
+    const countTasks = this.filterFunc(filter);
 
     return (
       <section className="todoapp">
-        <NewTaskForm onItemAdded={this.addItem} />
+        <NewTaskForm addTask={this.addTask} />
         <section className="main">
           <TaskList
-            todos={filterStatus}
-            min={min}
-            sec={sec}
+            tasks={countTasks}
             onDeleted={this.deleteItem}
-            addEditingItem={this.addEditingItem}
+            onEdit={this.onEdit}
             onToggleDone={this.onToggleDone}
-            onCheckedItem={this.onCheckedItem}
-            onEditingItem={(id) => {
-              this.onEditingItem(id);
-            }}
-            dataCreated={createDate}
+            handleInputChange={this.handleInputChange}
+            setPaused={this.setPaused}
+            setPlay={this.setPlay}
           />
           <Footer
-            todoCount={todoCount}
+            active={active}
             filter={filter}
             onFilterChange={this.onFilterChange}
             setClearComplitedTodo={this.setClearComplitedTodo}
