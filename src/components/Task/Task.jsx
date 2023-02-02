@@ -10,17 +10,22 @@ class Task extends Component {
   constructor(props) {
     super(props);
     this.textInput = React.createRef();
-    this.focusTextInput = this.focusTextInput.bind(this);
+
     this.state = {
       currentDate: new Date(),
     };
   }
 
-  focusTextInput() {
-    this.textInput.current.focus();
-  }
   componentDidMount() {
     this.interval = setInterval(() => this.handleDateChange(), 5000);
+  }
+
+  componentDidUpdate() {
+    if (this.props.task.editing) {
+      this.textInput.current.focus();
+    }
+
+    // console.log(prevProps.task.editing, this.props.task.editing);
   }
 
   componentWillUnmount() {
