@@ -34,7 +34,7 @@ export default class TodoApp extends Component {
           createDate: new Date(),
           completed: false,
           editing: false,
-          time: 300,
+          time: 100,
           pause: false,
         },
       },
