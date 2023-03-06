@@ -54,7 +54,7 @@ class NewTaskForm extends Component {
   render() {
     return (
       <header className="header">
-        <h1>todos</h1>
+        <h1>todos hooks</h1>
 
         <form className="new-todo-form" onKeyDown={(e) => this.onClickEnter(e)}>
           <input
