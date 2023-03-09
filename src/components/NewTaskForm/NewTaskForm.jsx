@@ -1,88 +1,82 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+
 import "./NewTaskForm.css";
 
-class NewTaskForm extends Component {
-  state = {
-    min: "",
-    sec: "",
-    title: "",
-  };
+const NewTaskForm = ({ addTask }) => {
+  const [title, setTitle] = useState("");
+  const [min, setMin] = useState("");
+  const [sec, setSec] = useState("");
 
-  onLabelChangeTitle = (e) => {
-    this.setState({
-      title: e.target.value,
-    });
-  };
-  onLabelChangeMin = (e) => {
-    this.setState({
-      min: e.target.value,
-    });
-  };
-  onLabelChangeSec = (e) => {
-    this.setState({
-      sec: e.target.value,
-    });
-  };
-
-  onSubmit = (e) => {
-    console.log(e.target.value);
-    e.preventDefault();
-    if (this.state.title === "") {
-      return;
+  const onLabelChangeTitle = (e) => {
+    if (e.target.value.charAt(0) === " ") {
+      setTitle("");
+    } else {
+      setTitle(e.target.value);
     }
-
-    this.props.addTask(this.state.title, this.state.min, this.state.sec);
-    this.setState({
-      title: "",
-    });
+  };
+  const onLabelChangeMin = (e) => {
+    setMin(e.target.value);
+  };
+  const onLabelChangeSec = (e) => {
+    setSec(e.target.value);
   };
 
-  onClickEnter = (e) => {
-    if (e.keyCode === 13) {
-      if (this.state.title !== "" && this.state.min !== "" && this.state.sec !== "") {
-        this.props.addTask(this.state.title, parseInt(this.state.min) * 60 + parseInt(this.state.sec));
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   addTask(title, min, sec);
+  //   setTitle("");
+  //   setMin("");
+  //   setSec("");
+  // };
 
-        this.setState({
-          title: "",
-          min: "",
-          sec: "",
-        });
+  const onClickEnter = (e) => {
+    if (e.keyCode === 13) {
+      if (title !== "" && min !== "" && sec !== "") {
+        addTask(title, parseInt(min) * 60 + parseInt(sec));
+
+        setTitle("");
+        setMin("");
+        setSec("");
       }
     }
   };
 
-  render() {
-    return (
-      <header className="header">
-        <h1>todos hooks</h1>
+  return (
+    <header className="header">
+      <h1>todos hooks</h1>
 
-        <form className="new-todo-form" onKeyDown={(e) => this.onClickEnter(e)}>
-          <input
-            placeholder="What needs to be done?"
-            type="text"
-            value={this.state.title}
-            className="new-todo"
-            onChange={this.onLabelChangeTitle}
-            autoFocus
-          />
-          <input
-            type="number"
-            className="new-todo-form__timer"
-            placeholder="Min"
-            value={this.state.min}
-            onChange={this.onLabelChangeMin}
-          />
-          <input
-            type="number"
-            className="new-todo-form__timer"
-            placeholder="Sec"
-            value={this.state.sec}
-            onChange={this.onLabelChangeSec}
-          />
-        </form>
-      </header>
-    );
-  }
-}
-
+      <form className="new-todo-form" onKeyDown={(e) => onClickEnter(e)}>
+        <input
+          placeholder="What needs to be done?"
+          type="text"
+          value={title}
+          className="new-todo"
+          onChange={onLabelChangeTitle}
+          autoFocus
+        />
+        <input
+          type="number"
+          className="new-todo-form__timer"
+          placeholder="Min"
+          value={min}
+          onChange={onLabelChangeMin}
+        />
+        <input
+          type="number"
+          className="new-todo-form__timer"
+          placeholder="Sec"
+          value={sec}
+          onChange={onLabelChangeSec}
+        />
+      </form>
+    </header>
+  );
+};
+NewTaskForm.defaultProps = {
+  onLabelChangeTitle: () => {},
+};
+NewTaskForm.propTypes = {
+  onLabelChangeTitle: PropTypes.func,
+};
 export default NewTaskForm;
