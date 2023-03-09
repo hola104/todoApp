@@ -14,7 +14,7 @@ function TaskList({ tasks, onDeleted, onEdit, onToggleDone, handleInputChange, s
       onDeleted={() => onDeleted(key)}
       onEdit={() => onEdit(key)}
       onToggleDone={() => onToggleDone(key)}
-      handleInputChange={handleInputChange(key)}
+      handleInputChange={handleInputChange}
       setPaused={() => setPaused(key)}
       setPlay={() => setPlay(key)}
     />

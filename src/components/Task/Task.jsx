@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { formatDistance } from "date-fns";
 
@@ -6,107 +6,98 @@ import Timer from "../TodoTimer/TodoTimer";
 
 import "./Task.css";
 
-class Task extends Component {
-  constructor(props) {
-    super(props);
-    this.textInput = React.createRef();
+function Task({ task, onDeleted, onEdit, onToggleDone, handleInputChange, setPaused, setPlay }) {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const textInput = React.createRef();
 
-    this.state = {
-      currentDate: new Date(),
-    };
-  }
+  const handleDateChange = () => {
+    setCurrentDate(new Date());
+  };
 
-  componentDidMount() {
-    this.interval = setInterval(() => this.handleDateChange(), 5000);
-  }
+  const focusEditInput = () => {
+    textInput.current.focus();
+  };
 
-  componentDidUpdate() {
-    if (this.props.task.editing) {
-      this.textInput.current.focus();
+  useEffect(() => {
+    if (task.editing) {
+      focusEditInput();
     }
+  });
 
-    // console.log(prevProps.task.editing, this.props.task.editing);
-  }
+  useEffect(() => {
+    const interval = setInterval(() => handleDateChange(), 10000);
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
+    return () => {
+      clearInterval(interval);
+    };
+  }, [currentDate]);
 
-  handleDateChange() {
-    this.setState({
-      currentDate: new Date(),
-    });
-  }
-
-  onSubmit = (e) => {
-    const { task, onEdit } = this.props;
-
+  const onSubmit = (e) => {
     e.preventDefault();
 
     if (task.label.trim() !== "") {
       onEdit(task.label);
     }
   };
-  handleChange = (e) => {
-    const { handleInputChange } = this.props;
 
-    handleInputChange(e.target.value);
+  const handleChange = (e) => {
+    handleInputChange(task.id, e.target.label);
   };
 
-  timeCreated = () => {
-    const { task } = this.props;
-    const { currentDate } = this.state;
-
-    return formatDistance(task.createDate, currentDate, { includeSeconds: true });
+  const timeCreated = () => {
+    formatDistance(task.createDate, currentDate, { includeSeconds: true });
   };
 
-  render() {
-    const { task, onDeleted, onEdit, onToggleDone, setPaused, setPlay, completed } = this.props;
-    // let className = editing ? "editing" : completed ? "completed" : "";
-    let className;
-    if (task.editing) {
-      className = "editing";
-    } else if (task.completed) {
-      className = "completed";
-    } else {
-      className = "";
-    }
+  let className;
 
-    return (
-      <li className={className}>
-        <div className="view">
-          <input className="toggle" type="checkbox" checked={completed} onChange={onToggleDone} />
-          <label>
-            <span className="title">{task.label}</span>
-            <Timer time={task.time} setPaused={setPaused} setPlay={setPlay} />
-            <span className="description">{`created ${this.timeCreated()} ago`}</span>
-          </label>
-          <button type="button" className="icon icon-edit" onClick={onEdit} aria-label="Edit" />
-          <button type="button" className="icon icon-destroy" onClick={onDeleted} aria-label="Destroy" />
-        </div>
-
-        <form onSubmit={this.onSubmit}>
-          <input
-            type="text"
-            ref={this.textInput}
-            className="edit"
-            autoFocus
-            value={task.label}
-            onChange={this.handleChange}
-          />
-        </form>
-      </li>
-    );
+  if (task.editing) {
+    className = "editing";
+  } else if (task.completed) {
+    className = "completed";
+  } else {
+    className = "";
   }
+  const escapeCancel = (e) => {
+    if (e.keyCode === 27) {
+      onEdit(task.label);
+    }
+  };
+
+  return (
+    <li className={className}>
+      <div className="view">
+        <input className="toggle" type="checkbox" onChange={onToggleDone} />
+        <label>
+          <span className="title">{task.label}</span>
+          <Timer time={task.time} setPaused={setPaused} setPlay={setPlay} />
+          <span className="description">{`created ${timeCreated()} ago`}</span>
+        </label>
+        <button type="button" className="icon icon-edit" onClick={onEdit} aria-label="Edit" />
+        <button type="button" className="icon icon-destroy" onClick={onDeleted} aria-label="Destroy" />
+      </div>
+
+      <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          ref={textInput}
+          onKeyDown={escapeCancel}
+          className="edit"
+          autoFocus
+          value={task.label}
+          onChange={handleChange}
+        />
+      </form>
+    </li>
+  );
 }
 Task.propTypes = {
   task: PropTypes.shape({
     id: PropTypes.number,
-    value: PropTypes.string,
+    label: PropTypes.string,
     completed: PropTypes.bool,
     editing: PropTypes.bool,
     time: PropTypes.number,
-    date: PropTypes.instanceOf(Date),
+    createDate: PropTypes.instanceOf(Date),
   }).isRequired,
   onDeleted: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
