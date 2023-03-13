@@ -1,19 +1,27 @@
 import PropTypes from "prop-types";
 
-import Task from "../Task/Task";
+import Task from "../Task";
 
 import "./TaskList.css";
 
-function TaskList({ tasks, onDeleted, onEdit, onToggleDone, handleInputChange, setPaused, setPlay }) {
+function TaskList({
+  tasks,
+  onDelete,
+  onEdit,
+  onToggleChecked,
+  handleInputChange,
+  setPaused,
+  setPlay,
+}) {
   const keys = Object.keys(tasks);
 
   const elements = keys.map((key) => (
     <Task
       key={key}
       task={tasks[key]}
-      onDeleted={() => onDeleted(key)}
+      onDelete={() => onDelete(key)}
       onEdit={() => onEdit(key)}
-      onToggleDone={() => onToggleDone(key)}
+      onToggleChecked={() => onToggleChecked(key)}
       handleInputChange={handleInputChange}
       setPaused={() => setPaused(key)}
       setPlay={() => setPlay(key)}
@@ -27,16 +35,16 @@ TaskList.propTypes = {
   tasks: PropTypes.shape({
     task: PropTypes.shape({
       id: PropTypes.number,
-      label: PropTypes.string,
-      completed: PropTypes.bool,
+      value: PropTypes.string,
+      cheked: PropTypes.bool,
       editing: PropTypes.bool,
-      time: PropTypes.number,
+      sec: PropTypes.number,
       date: PropTypes.instanceOf(Date),
     }),
   }).isRequired,
-  onDeleted: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
-  onToggleDone: PropTypes.func.isRequired,
+  onToggleChecked: PropTypes.func.isRequired,
   handleInputChange: PropTypes.func.isRequired,
   setPaused: PropTypes.func.isRequired,
   setPlay: PropTypes.func.isRequired,

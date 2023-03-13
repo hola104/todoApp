@@ -2,22 +2,27 @@ import PropTypes from "prop-types";
 
 import "./TaskFilter.css";
 
-function TaskFilter({ filter, onFilterChange }) {
+function TaskFilter({ filterName, onFilterSelect }) {
   let maxId = 1;
 
   const buttonsData = [
     { name: "all", label: "All" },
     { name: "active", label: "Active" },
-    { name: "completed", label: "Completed" },
+    { name: "complite", label: "Completed" },
   ];
 
   const buttons = buttonsData.map(({ name, label }) => {
-    const active = filter === name;
-    const classFilter = active ? "selected" : "";
+    const active = filterName === name;
+    const clazz = active ? "selected" : "";
 
     return (
       <li key={maxId++}>
-        <button type="button" className={classFilter} key={name} onClick={() => onFilterChange(name)}>
+        <button
+          type="button"
+          className={clazz}
+          key={name}
+          onClick={() => onFilterSelect(name)}
+        >
           {label}
         </button>
       </li>
@@ -25,12 +30,12 @@ function TaskFilter({ filter, onFilterChange }) {
   });
 
   TaskFilter.propTypes = {
-    filter: PropTypes.string,
-    onFilterChange: PropTypes.func.isRequired,
+    filterName: PropTypes.string,
+    onFilterSelect: PropTypes.func.isRequired,
   };
 
   TaskFilter.defaultProps = {
-    filter: "all",
+    filterName: "all",
   };
 
   return <ul className="filters">{buttons}</ul>;

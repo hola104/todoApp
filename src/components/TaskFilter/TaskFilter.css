@@ -31,7 +31,6 @@
 
 .filters li button.selected {
   border-color: rgba(175, 47, 47, 0.2);
-  cursor: pointer;
 }
 
 .clear-completed,
@@ -44,4 +43,14 @@ html .clear-completed:active {
 
 .clear-completed:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 430px) {
+  .footer {
+    height: 50px;
+  }
+
+  .filters {
+    bottom: 10px;
+  }
 }
